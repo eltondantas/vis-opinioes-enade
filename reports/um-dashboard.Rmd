@@ -67,21 +67,57 @@ cursos %>%
     geom_col()
 ```
 
-```{r}
-
-dados = respostas %>%
+```{r fig.height=12, fig.width=6}
+# Oportunidades de intercâmbio
+o = respostas %>%
     na.omit(.) %>%
     group_by(IES,tema) %>%
     filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
     summarise(media_ies = mean(media)) %>%
-    glimpse()
-    
-c = dados %>%
     ggplot(aes(x = reorder(IES,media_ies),
                y = media_ies,
                color = tema)) +
     geom_point() +
     coord_flip()+
     labs(x="Universidades", y = "Media")
-ggplotly(c)
+ggplotly(o)
 ```
+
+```{r}
+# Perfil técnico
+t = respostas %>%
+    na.omit(.) %>%
+    group_by(UF,
+             IES,
+             tema) %>%
+    filter(tema == "Ambiente p/ aulas práticas" |
+            tema == "Atividades práticas suficientes" |
+            tema == "Conteúdo útil p/ prática" |
+            tema == "Oport. de extensão" |
+            tema == "Equipamentos suficientes") %>%
+    summarise(media_t = mean(media)) %>% 
+    ggplot(aes(x = media_t,
+               y = IES,
+               color = tema)) +
+    geom_point()
+ggplotly(t)
+    
+# Perfil científico
+c = respostas %>%
+    na.omit(.) %>%
+    group_by(UF,
+             IES,
+             tema) %>%
+    filter(tema == "Comunicação oral e escrita" |
+            tema == "Iniciação científica" |
+            tema == "Monitores" |
+            tema == "Reflexão e argumentação" |
+            tema == "Pensamento crítico") %>%
+    summarise(media_c = mean(media)) %>% 
+    ggplot(aes(x = media_c,
+               y = IES,
+               color = tema)) +
+    geom_point()
+ggplotly(c)   
+```
+
