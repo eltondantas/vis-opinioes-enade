@@ -140,7 +140,7 @@ dados %>%
             text = ~paste('IES: ', IES,
                           '<br>Media: ', media_ies)) %>% 
     layout(title = "Oportunidades de intercambio no pais ou exterior nas IES brasileiras",
-           yaxis = list(title = "Media"),
-           xaxis = list(title = "Universidade"))
+           yaxis = list(title = "Universidade"),
+           xaxis = list(title = "Media"))
 ```
 
