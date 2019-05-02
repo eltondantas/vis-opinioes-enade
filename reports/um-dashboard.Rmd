@@ -69,18 +69,25 @@ cursos %>%
 
 ```{r fig.height=12, fig.width=6}
 # Oportunidades de intercâmbio
-o = respostas %>%
-    na.omit(.) %>%
+
+dados = respostas %>%
+    na.omit() %>%
     group_by(IES,tema) %>%
     filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
     summarise(media_ies = mean(media)) %>%
-    ggplot(aes(x = reorder(IES,media_ies),
-               y = media_ies,
-               color = tema)) +
-    geom_point() +
-    coord_flip()+
-    labs(x="Universidades", y = "Media")
-ggplotly(o)
+    glimpse()
+
+
+dados %>% 
+    plot_ly(y = ~IES,
+            x = ~media_ies, 
+            type = "scatter", 
+            color = ~tema,
+            text = ~paste('IES: ', IES,
+                          '<br>Media: ', media_ies)) %>% 
+    layout(title = "Oportunidades de intercambio no pais ou exterior nas IES brasileiras",
+           yaxis = list(title = "Universidade"),
+           xaxis = list(title = "Media"))
 ```
 
 ```{r}
@@ -124,23 +131,5 @@ ggplotly(c)
 
 ```{r}
 
-dados = respostas %>%
-    na.omit() %>%
-    group_by(IES,tema) %>%
-    filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
-    summarise(media_ies = mean(media)) %>%
-    glimpse()
-
-
-dados %>% 
-    plot_ly(y = ~IES,
-            x = ~media_ies, 
-            type = "scatter", 
-            color = ~tema,
-            text = ~paste('IES: ', IES,
-                          '<br>Media: ', media_ies)) %>% 
-    layout(title = "Oportunidades de intercambio no pais ou exterior nas IES brasileiras",
-           yaxis = list(title = "Universidade"),
-           xaxis = list(title = "Media"))
 ```
 
