@@ -68,14 +68,19 @@ cursos %>%
 ```
 
 ```{r}
-c = respostas %>%
+
+dados = respostas %>%
     na.omit(.) %>%
-    group_by(IES) %>%
+    group_by(IES,tema) %>%
     filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
     summarise(media_ies = mean(media)) %>%
+    glimpse()
+    
+c = dados %>%
     ggplot(aes(x = reorder(IES,media_ies),
-               y = media_ies)) +
-    geom_point(color = "blue") +
+               y = media_ies,
+               color = tema)) +
+    geom_point() +
     coord_flip()+
     labs(x="Universidades", y = "Media")
 ggplotly(c)
