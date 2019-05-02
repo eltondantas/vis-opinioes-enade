@@ -11,6 +11,8 @@ library(flexdashboard)
 library(tidyverse)
 library(viridis)
 library(hrbrthemes)
+library(plotly)
+
 theme_set(theme_ipsum())
 
 respostas = read_csv(here::here("data/enade-ccc-2017.csv"),
@@ -65,3 +67,16 @@ cursos %>%
     geom_col()
 ```
 
+```{r}
+c = respostas %>%
+    na.omit(.) %>%
+    group_by(IES) %>%
+    filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
+    summarise(media_ies = mean(media)) %>%
+    ggplot(aes(x = reorder(IES,media_ies),
+               y = media_ies)) +
+    geom_point(color = "blue") +
+    coord_flip()+
+    labs(x="Universidades", y = "Media")
+ggplotly(c)
+```
