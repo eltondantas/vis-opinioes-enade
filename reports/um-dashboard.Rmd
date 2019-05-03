@@ -87,8 +87,7 @@ ggplotly(o)
 # Perfil técnico
 t = respostas %>%
     na.omit(.) %>%
-    group_by(UF,
-             IES,
+    group_by(IES,
              tema) %>%
     filter(tema == "Ambiente p/ aulas práticas" |
             tema == "Atividades práticas suficientes" |
@@ -99,14 +98,24 @@ t = respostas %>%
     ggplot(aes(x = media_t,
                y = IES,
                color = tema)) +
-    geom_point()
+    geom_point(alpha = .5) +
+    geom_point(data = respostas %>%
+                    na.omit(.) %>%
+                    group_by(IES) %>%
+                    filter(tema == "Ambiente p/ aulas práticas" |
+                            tema == "Atividades práticas suficientes" |
+                            tema == "Conteúdo útil p/ prática" |
+                            tema == "Oport. de extensão" |
+                            tema == "Equipamentos suficientes") %>% 
+                    summarise(media_t = mean(media)), 
+                               color = "red")
 ggplotly(t)
     
 # Perfil científico
+
 c = respostas %>%
     na.omit(.) %>%
-    group_by(UF,
-             IES,
+    group_by(IES,
              tema) %>%
     filter(tema == "Comunicação oral e escrita" |
             tema == "Iniciação científica" |
@@ -117,7 +126,17 @@ c = respostas %>%
     ggplot(aes(x = media_c,
                y = IES,
                color = tema)) +
-    geom_point()
+    geom_point(alpha = .5) +
+    geom_point(data = respostas %>%
+                    na.omit(.) %>%
+                    group_by(IES) %>%
+                    filter(tema == "Comunicação oral e escrita" |
+                            tema == "Iniciação científica" |
+                            tema == "Monitores" |
+                            tema == "Reflexão e argumentação" |
+                            tema == "Pensamento crítico") %>% 
+                    summarise(media_c = mean(media)), 
+                               color = "red")
 ggplotly(c)   
 ```
 
