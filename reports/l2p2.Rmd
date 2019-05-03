@@ -47,6 +47,7 @@ dados %>%
            yaxis = list(title = "Universidade"),
            xaxis = list(title = "Media"))
 ```
+
 ### Chart 2
 
 ```{r}
@@ -78,8 +79,14 @@ t = respostas %>%
     labs(x = "Media")
 ggplotly(t)
 
+
     
 # Perfil científico
+```
+
+### Chart 3
+
+```{r}
 c= respostas %>%
     na.omit(.) %>%
     group_by(IES,
@@ -107,5 +114,4 @@ c= respostas %>%
     labs(x = "Media")
 ggplotly(c)
 ```
-Column {data-width=350}
------------------------------------------------------------------------
+
