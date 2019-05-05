@@ -27,13 +27,13 @@ dados = respostas %>%
     na.omit() %>%
     group_by(IES,tema) %>%
     filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
-    summarise(media_ies = mean(media)) %>%
+    summarise(media_ies = mean(media), ) %>%
     glimpse()
 
 
 dados %>% 
-    plot_ly(y = ~IES,
-            x = ~media_ies, 
+    plot_ly(x = ~media_ies,
+            y = ~reorder(IES,media_ies),
             type = "scatter", 
             color = ~tema,
             text = ~paste('IES: ', IES,
@@ -41,6 +41,9 @@ dados %>%
     layout(title = "Oportunidades de intercambio no pais ou exterior nas IES brasileiras",
            yaxis = list(title = "Universidade"),
            xaxis = list(title = "Media"))
+
+dados %>% 
+    
 ```
 
 ### Chart 2
@@ -56,9 +59,9 @@ t = respostas %>%
             tema == "Conteúdo útil p/ prática" |
             tema == "Oport. de extensão" |
             tema == "Equipamentos suficientes") %>%
-    summarise(mediana_t = median(media)) %>% 
-    ggplot(aes(x = mediana_t,
-               y = IES,
+    summarise(media_t = mean(media)) %>% 
+    ggplot(aes(x = media_t,
+               y = reorder(IES,media_t),
                color = tema)) +
     geom_point(alpha = .5) +
     geom_point(data = respostas %>%
@@ -69,7 +72,7 @@ t = respostas %>%
                             tema == "Conteúdo útil p/ prática" |
                             tema == "Oport. de extensão" |
                             tema == "Equipamentos suficientes") %>% 
-                    summarise(mediana_t = median(media)), 
+                    summarise(media_t = mean(media)), 
                                color = "violetred4")+
     labs(x = "Media")
 ggplotly(t)
@@ -92,7 +95,7 @@ c= respostas %>%
             tema == "Pensamento crítico") %>%
     summarise(media_c = mean(media)) %>% 
     ggplot(aes(x = media_c,
-               y = IES,
+               y = reorder(IES,media_c),
                color = tema)) +
     geom_point(alpha = .5) +
     geom_point(data = respostas %>%
@@ -107,5 +110,5 @@ c= respostas %>%
                                color = "navy")+
     labs(x = "Media")
 ggplotly(c)
-```
 
+```
