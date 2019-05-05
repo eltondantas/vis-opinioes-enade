@@ -36,12 +36,17 @@ dados %>%
             y = ~reorder(IES,media_ies),
             type = "scatter", 
             color = ~tema,
+            colors = "Paired",
             text = ~paste('IES: ', IES,
                           '<br>Media: ', media_ies)) %>% 
     layout(title = "Oportunidades de intercambio no pais ou exterior nas IES brasileiras",
            yaxis = list(title = "Universidade"),
            xaxis = list(title = "Media"))
 
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 5c4f4dd99c765e5e6a08c30b756958716586c784
 ```
 
 ### Chart 2
@@ -71,7 +76,7 @@ t = respostas %>%
                             tema == "Oport. de extensão" |
                             tema == "Equipamentos suficientes") %>% 
                     summarise(media_t = mean(media)), 
-                               color = "violetred4")+
+                               color = "gray22")+
     labs(x = "Media")
 ggplotly(t)
 
@@ -105,7 +110,7 @@ c= respostas %>%
                             tema == "Reflexão e argumentação" |
                             tema == "Pensamento crítico") %>% 
                     summarise(media_c = mean(media)), 
-                               color = "navy")+
+                               color = "black")+
     labs(x = "Media")
 ggplotly(c)
 
