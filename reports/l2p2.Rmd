@@ -42,8 +42,6 @@ dados %>%
            yaxis = list(title = "Universidade"),
            xaxis = list(title = "Media"))
 
-dados %>% 
-    
 ```
 
 ### Chart 2
@@ -110,5 +108,44 @@ c= respostas %>%
                                color = "navy")+
     labs(x = "Media")
 ggplotly(c)
+
+```
+
+```{r}
+# Comparação dos perfis
+
+cientifico = respostas %>%
+                na.omit(.) %>%
+                group_by(IES,
+                         media) %>%
+                filter(
+                    tema == "Comunicação oral e escrita" |
+                    tema == "Iniciação científica" |
+                    tema == "Monitores" |
+                    tema == "Reflexão e argumentação" |
+                    tema == "Pensamento crítico") %>%
+                summarise(media_c = mean(media)) %>%
+                select(IES,media_c) %>%
+                summarise(media_c = mean(media_c))
+                
+tecnico =  respostas %>%
+                na.omit(.) %>%
+                group_by(IES,
+                         media) %>%
+                filter(
+                        tema == "Ambiente p/ aulas práticas" |
+                        tema == "Atividades práticas suficientes" |
+                        tema == "Conteúdo útil p/ prática" |
+                        tema == "Oport. de extensão" |
+                        tema == "Equipamentos suficientes") %>%
+                summarise(media_t = mean(media)) %>%
+                # mutate(media_t = mean(media)) %>% 
+                select(IES,media_t) %>% 
+                # group_by(IES) %>% 
+                summarise(media_t = mean(media_t))
+
+perfis = add_column(cientifico, media_t = tecnico$media_t)
+
+
 
 ```
