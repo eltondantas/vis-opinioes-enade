@@ -43,10 +43,6 @@ dados %>%
            yaxis = list(title = "Universidade"),
            xaxis = list(title = "Media"))
 
-<<<<<<< HEAD
-=======
-    
->>>>>>> 5c4f4dd99c765e5e6a08c30b756958716586c784
 ```
 
 ### Chart 2
@@ -144,9 +140,7 @@ tecnico =  respostas %>%
                         tema == "Oport. de extensão" |
                         tema == "Equipamentos suficientes") %>%
                 summarise(media_t = mean(media)) %>%
-                # mutate(media_t = mean(media)) %>% 
                 select(IES,media_t) %>% 
-                # group_by(IES) %>% 
                 summarise(media_t = mean(media_t))
 
 perfis = add_column(cientifico, media_t = tecnico$media_t)
