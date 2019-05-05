@@ -146,6 +146,17 @@ tecnico =  respostas %>%
 
 perfis = add_column(cientifico, media_t = tecnico$media_t)
 
-
-
+p = perfis %>%
+    mutate(diferenca = media_c - media_t) %>% 
+    ggplot(aes(x = reorder(IES,diferenca), y = diferenca, fill = diferenca > 0)) +
+    geom_col() +
+    labs(
+        x = "",
+        y = "Diferença = nível científico - nível técnico",
+        title = "Perfis das IES com curso de Ciência da Computação",
+        subtitle = "",
+        caption = ""
+    ) +
+    coord_flip()
+ggplotly(p)
 ```
