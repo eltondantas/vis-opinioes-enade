@@ -48,7 +48,7 @@ dados %>%
 
 Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medianas de cada IES para tais temas.
 
-```{r}
+```{r width = 100}
 # Perfil técnico
 t = respostas %>%
     na.omit(.) %>%
