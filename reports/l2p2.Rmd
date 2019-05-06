@@ -19,9 +19,9 @@ respostas = read_csv(here::here("data/enade-ccc-2017.csv"),
 
 ```
 
-### Chart 1
+Vamos começar observando quais IES brasileiras tem mais oportunidades de intercambio.
 
-```{r fig.height=12, fig.width=6}
+```{r}
 # Oportunidades de intercâmbio
 
 dados = respostas %>%
@@ -46,7 +46,7 @@ dados %>%
 
 ```
 
-### Chart 2
+Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medianas de cada IES para tais temas.
 
 ```{r}
 # Perfil técnico
@@ -74,13 +74,13 @@ t = respostas %>%
                             tema == "Equipamentos suficientes") %>% 
                     summarise(media_t = mean(media)), 
                                color = "gray22")+
-    labs(x = "Media")
+    labs(x = "Media", y = "IES")
 ggplotly(t)
 
     
 ```
 
-### Chart 3
+Vamos observar para um perfil mais cientifico, também
 
 ```{r}
 # Perfil científico
@@ -108,10 +108,12 @@ c= respostas %>%
                             tema == "Pensamento crítico") %>% 
                     summarise(media_c = mean(media)), 
                                color = "black")+
-    labs(x = "Media")
+    labs(x = "Media", y = "IES")
 ggplotly(c)
 
 ```
+
+Agora, podemos comparar se uma IES possui um perfil mais cientifico ou técnico
 
 ```{r}
 # Comparação dos perfis
@@ -161,11 +163,7 @@ p = perfis %>%
 ggplotly(p)
 ```
 
-
-
-
-
-# Calculo das medianas para cada categoria
+Para a seguinte visualização, vamos perceber quais as notas de cada estado para as categorias do Enade. Para isso, calculamos a mediana de cada categoria com base no estado.
 
 ```{r}
 alem_tecnico = respostas %>%
@@ -196,6 +194,8 @@ outros = respostas %>%
 
 ```
 
+Calculando as medianas para cada estado
+
 ```{r}
 mediana_geral_uf = respostas %>%
     group_by(UF) %>% summarise(mediana_geral=median(media))
@@ -220,26 +220,10 @@ mediana_por_Uf = mediana_geral_uf %>%
 ```
 
 
-Interativa para categoria por IES
-
 ```{r width = 10, height = 5000}
 selectInput("UF",
             "UF",
-            choices = c("AM",
-                        "BA", 
-                        "CE",
-                        "DF",
-                        "GO",
-                        "MA", 
-                        "MG",
-                        "PB",
-                        "PE", 
-                        "PI", 
-                        "PR", 
-                        "RJ", 
-                        "RS", 
-                        "SC", 
-                        "SP"))
+            choices = c("AM", "BA", "CE","DF","GO","MA", "MG","PB","PE", "PI", "PR","RJ", "RS", "SC", "SP"))
 
 renderPlot({
     regiao_plot = mediana_por_Uf %>% filter(UF == input$UF)
