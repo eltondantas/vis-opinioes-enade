@@ -1,5 +1,5 @@
 ---
-title: "Um Dashboard"
+title: "L2P2"
 author: "Elton Dantas e Rebeca Beltrão"
 runtime: shiny
 output: 
@@ -45,6 +45,8 @@ dados %>%
            xaxis = list(title = "Media"))
 
 ```
+
+FMU, UNESC, UFSCAR e PUC-Minas são as melhores IES para oportunidades de intercâmbio, com médias acima de 5. A Faculdade Pitágoras de São Luiz é a pior no quesito.
 
 #Agora, comparamos se uma IES possui um perfil mais cientifico ou técnico
 
@@ -101,7 +103,7 @@ Observa-se que a IES com perfil mais científico é a UECE e a FEI, o mais técn
 
 #Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medias de cada IES para tais temas.
 
-```{r width = 100}
+```{r fig.width=8, fig.height=8}
 # Perfil técnico
 t = respostas %>%
     na.omit(.) %>%
@@ -134,12 +136,13 @@ ggplotly(t)
 
     
 ```
+
 UNESC, FMU, UFAM e PUC-Minas são as IES que apresentam melhores resultados para os temas de perfil técnico, com médias a partir de 5 na avaliação dos estudantes. A Faculdade Pitágoras é a segunda pior para o perfil científico, destacando-se com a pior média de oportunidade de extensão.
 
 
 #Vamos observar para um perfil mais cientifico também
 
-```{r}
+```{r fig.width=8, fig.height=8}
 # Perfil científico
 c= respostas %>%
     na.omit(.) %>%
@@ -171,6 +174,7 @@ c= respostas %>%
 ggplotly(c)
 
 ```
+
 UNESC, FMU e PUC-Minas também se destacam como as IES que apresentam melhores resultados para os temas de perfil científico, com médias acima de 5 na avaliação dos estudantes. FACAPE destaca-se com a pior média no quesito monitores e a Faculdade Pitágoras de São Luiz é a pior também no perfil científico, destacando-se com a menor média de iniciação científica.
 
 
@@ -231,7 +235,7 @@ mediana_por_Uf = mediana_geral_uf %>%
 ```
 
 
-```{r width = 10, height = 5000}
+```{r width = 8, height = 3000}
 selectInput("UF",
             "UF",
             choices = c("AM", "BA", "CE","DF","GO","MA", "MG","PB","PE", "PI", "PR","RJ", "RS", "SC", "SP"))
