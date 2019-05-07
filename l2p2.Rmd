@@ -1,0 +1,267 @@
+---
+title: "l2p2"
+author: "Elton Dantas e Rebeca Beltrão"
+date: "6 de maio de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(viridis)
+library(plotly)
+library(shiny)
+
+respostas = read_csv(here::here("data/enade-ccc-2017.csv"),
+                     col_types = "cccdccdddc")
+
+```
+
+#Vamos começar observando quais IES brasileiras tem mais oportunidades de intercambio.
+
+```{r}
+# Oportunidades de intercâmbio
+
+dados = respostas %>%
+    na.omit() %>%
+    group_by(IES,tema) %>%
+    filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
+    summarise(media_ies = mean(media)) %>%
+    glimpse()
+
+
+dados %>% 
+    plot_ly(x = ~media_ies,
+            y = ~reorder(IES,media_ies),
+            type = "scatter", 
+            color = ~tema,
+            colors = "Paired",
+            text = ~paste('IES: ', IES,
+                          '<br>Media: ', media_ies)) %>% 
+    layout(title = "Oportunidades de intercambio no pais ou exterior nas IES brasileiras",
+           yaxis = list(title = "Universidade"),
+           xaxis = list(title = "Media"))
+
+```
+
+    Filtramos os dados por instituição e geramos um gráfico que mostra as medias para cada tema.É possivel observar que na maioria das IES, os valores são muito próximos entre si, mas UFPR, UFABC, USJT divergem muito mais. FMU, UNESC, UFSCAR e PUC-Minas são as melhores IES para oportunidades de intercâmbio, com médias acima de 5. A Faculdade Pitágoras de São Luiz é a pior no quesito.
+
+#Agora, comparamos se uma IES possui um perfil mais cientifico ou técnico
+
+```{r}
+# Comparação dos perfis
+
+cientifico = respostas %>%
+                na.omit(.) %>%
+                group_by(IES,
+                         media) %>%
+                filter(
+                    tema == "Comunicação oral e escrita" |
+                    tema == "Iniciação científica" |
+                    tema == "Monitores" |
+                    tema == "Reflexão e argumentação" |
+                    tema == "Pensamento crítico") %>%
+                summarise(media_c = mean(media)) %>%
+                select(IES,media_c) %>%
+                summarise(media_c = mean(media_c))
+                
+tecnico =  respostas %>%
+                na.omit(.) %>%
+                group_by(IES,
+                         media) %>%
+                filter(
+                        tema == "Ambiente p/ aulas práticas" |
+                        tema == "Atividades práticas suficientes" |
+                        tema == "Conteúdo útil p/ prática" |
+                        tema == "Oport. de extensão" |
+                        tema == "Equipamentos suficientes") %>%
+                summarise(media_t = mean(media)) %>%
+                select(IES,media_t) %>% 
+                summarise(media_t = mean(media_t))
+
+perfis = add_column(cientifico, media_t = tecnico$media_t)
+
+p = perfis %>%
+    mutate(diferenca = media_c - media_t) %>% 
+    ggplot(aes(x = reorder(IES,diferenca), y = diferenca, fill = diferenca > 0)) +
+    geom_col() +
+    labs(
+        x = "",
+        y = "Diferença = nível científico - nível técnico",
+        title = "Perfis das IES com curso de Ciência da Computação",
+        subtitle = "",
+        caption = ""
+    ) +
+    coord_flip()
+ggplotly(p)
+```
+
+    Observa-se que a IES com perfil mais científico é a UECE e a FEI, o mais técnico. Já a FMU possui o perfil mais equilibrado dentre todas. Entretanto, vale ressaltar que esta comparação não avalia a qualidade dos perfis para cada IES. Para isto, devemos considerar o desempenho das médias dos temas que compõem cada perfil.
+
+
+#Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medias de cada IES para tais temas.
+
+```{r fig.width=8, fig.height=8}
+# Perfil técnico
+t = respostas %>%
+    na.omit(.) %>%
+    group_by(IES,
+             tema) %>%
+    filter(tema == "Ambiente p/ aulas práticas" |
+            tema == "Atividades práticas suficientes" |
+            tema == "Conteúdo útil p/ prática" |
+            tema == "Oport. de extensão" |
+            tema == "Equipamentos suficientes") %>%
+    summarise(media_t = mean(media)) %>% 
+    ggplot(aes(x = media_t,
+               y = reorder(IES,media_t),
+               color = tema)) +
+    geom_point(alpha = .5) +
+    geom_point(data = respostas %>%
+                    na.omit(.) %>%
+                    group_by(IES) %>%
+                    filter(tema == "Ambiente p/ aulas práticas" |
+                            tema == "Atividades práticas suficientes" |
+                            tema == "Conteúdo útil p/ prática" |
+                            tema == "Oport. de extensão" |
+                            tema == "Equipamentos suficientes") %>% 
+                    summarise(media_t = mean(media)), 
+                               color = "gray22")+
+    labs(x = "Media",
+         y = "IES",
+         title = "Médias por temas técnicos")
+ggplotly(t)
+
+    
+```
+
+    Agrupamos os dados por instituição, obtendo um grafico que aponta uma mediana para cada tema e a mediana geral para todos eles. UNESC, FMU, UFAM e PUC-Minas são as IES que apresentam melhores resultados para os temas de perfil técnico, com médias a partir de 5 na avaliação dos estudantes. A Faculdade Pitágoras é a segunda pior para o perfil científico, destacando-se com a pior média de oportunidade de extensão.
+
+
+#Vamos observar para um perfil mais cientifico também
+
+```{r fig.width=8, fig.height=8}
+# Perfil científico
+c= respostas %>%
+    na.omit(.) %>%
+    group_by(IES,
+             tema) %>%
+    filter(tema == "Comunicação oral e escrita" |
+            tema == "Iniciação científica" |
+            tema == "Monitores" |
+            tema == "Reflexão e argumentação" |
+            tema == "Pensamento crítico") %>%
+    summarise(media_c = mean(media)) %>% 
+    ggplot(aes(x = media_c,
+               y = reorder(IES,media_c),
+               color = tema)) +
+    geom_point(alpha = .5) +
+    geom_point(data = respostas %>%
+                    na.omit(.) %>%
+                    group_by(IES) %>%
+                    filter(tema == "Comunicação oral e escrita" |
+                            tema == "Iniciação científica" |
+                            tema == "Monitores" |
+                            tema == "Reflexão e argumentação" |
+                            tema == "Pensamento crítico") %>% 
+                    summarise(media_c = mean(media)), 
+                               color = "black")+
+    labs(x = "Media",
+         y = "IES",
+         title = "Médias por temas científicos")
+ggplotly(c)
+
+```
+
+    UNESC, FMU e PUC-Minas também se destacam como as IES que apresentam melhores resultados para os temas de perfil científico, com médias acima de 5 na avaliação dos estudantes. FACAPE destaca-se com a pior média no quesito monitores e a Faculdade Pitágoras de São Luiz é a pior também no perfil científico, destacando-se com a menor média de iniciação científica.
+
+
+#Para a seguinte visualização, vamos perceber quais as notas de cada estado para as categorias do Enade. Para isso, calculamos a mediana de cada categoria com base no estado.
+
+```{r}
+alem_tecnico = respostas %>%
+    filter(categoria == "Aprendizagem além do técnico") %>%
+    group_by(UF) %>% 
+    summarise(mediana_aprendizagem = median(media)) 
+
+cursos_geral = respostas %>%
+    filter(categoria == "Curso em geral") %>%
+    group_by(UF) %>% 
+    summarise(mediana_curso = median(media)) 
+
+ensino_apoio_aval = respostas %>%
+    filter(categoria == "Ensino, apoio e avaliacão") %>%
+    group_by(UF) %>%
+    summarise(mediana_eaa = median(media)) 
+
+infraestrutura = respostas %>%
+    filter(categoria == "Infraestrutura") %>%
+    group_by(UF) %>% 
+    summarise(mediana_infraestrutura = median(media)) 
+
+outros = respostas %>%
+    filter(categoria == "Outros") %>%
+    group_by(NOME_CURSO) %>% 
+    summarise(mediana_outros = median(media)) 
+
+
+```
+
+Calculando as medianas para cada estado
+
+```{r}
+mediana_geral_uf = respostas %>%
+    group_by(UF) %>% summarise(mediana_geral=median(media))
+
+UF <- c("AM", "BA", "CE", "DF", "GO", "MA", "MG","PB", "PE", "PI", "PR", "RJ", "RS","SC","SP")
+
+mediana_geral_uf$UF = UF
+mediana_geral_uf$mediana_ALDT = alem_tecnico$mediana_aprendizagem
+mediana_geral_uf$mediana_CEG = cursos_geral$mediana_curso
+mediana_geral_uf$mediana_EAA = ensino_apoio_aval$mediana_eaa
+mediana_geral_uf$mediana_INFRA = infraestrutura$mediana_infraestrutura
+
+mediana_geral_uf <- mediana_geral_uf[order(mediana_geral_uf$mediana_geral),]
+
+mediana_por_Uf = mediana_geral_uf %>%
+                 group_by(UF) %>%
+                 summarise(mediana_ALDT=median(mediana_ALDT),
+                           mediana_CEG=median(mediana_CEG),
+                           mediana_EAA=median(mediana_EAA),
+                           mediana_INFRA=median(mediana_INFRA))
+
+```
+
+
+```{r width = 8, height = 3000}
+selectInput("UF",
+            "UF",
+            choices = c("AM", "BA", "CE","DF","GO","MA", "MG","PB","PE", "PI", "PR","RJ", "RS", "SC", "SP"))
+
+renderPlot({
+    regiao_plot = mediana_por_Uf %>% filter(UF == input$UF)
+    dat <-  data.frame(
+        medianas_UF <- c(regiao_plot$mediana_ALDT, 
+                         regiao_plot$mediana_CEG,
+                         regiao_plot$mediana_EAA,
+                         regiao_plot$mediana_INFRA),
+        categorias <- c("Aprendizado Além do Tecnico",
+                        "Curso em Geral", 
+                        "Ensino Apoio Avaliação",
+                        "Infraestrutura"))
+
+    ggplot(data= dat, 
+           aes(x = categorias,
+               y = medianas_UF, color=categorias)) +
+       geom_point( size=4) +
+       theme_light() +
+       theme(
+        panel.grid.major.x = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.x = element_blank())+
+        labs(x = "Categorias",
+             y = "Medianas por UF")
+})
+```
+
+    Calculamos a mediana de cada categoria com base em um estado, e podemos observar que os valores para cada categoria são bastante divergentes, com notas muito altas em algumas e muito baixas em outras, como é o caso do estado de SP e do PR por exemplo. Isso demonstra que os estados não investem uniformemente nas IES e que mesmo que seja uma boa instituição, as medias não são altas para todos os quesitos.
