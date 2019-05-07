@@ -19,7 +19,7 @@ respostas = read_csv(here::here("data/enade-ccc-2017.csv"),
 
 ```
 
-Vamos começar observando quais IES brasileiras tem mais oportunidades de intercambio.
+#Vamos começar observando quais IES brasileiras tem mais oportunidades de intercambio.
 
 ```{r}
 # Oportunidades de intercâmbio
@@ -28,7 +28,7 @@ dados = respostas %>%
     na.omit() %>%
     group_by(IES,tema) %>%
     filter(tema == "Oport. Intercâmbio no país" | tema == "Oport. Intercâmbio exterior") %>%
-    summarise(media_ies = mean(media), ) %>%
+    summarise(media_ies = mean(media)) %>%
     glimpse()
 
 
@@ -46,74 +46,7 @@ dados %>%
 
 ```
 
-Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medianas de cada IES para tais temas.
-
-```{r width = 100}
-# Perfil técnico
-t = respostas %>%
-    na.omit(.) %>%
-    group_by(IES,
-             tema) %>%
-    filter(tema == "Ambiente p/ aulas práticas" |
-            tema == "Atividades práticas suficientes" |
-            tema == "Conteúdo útil p/ prática" |
-            tema == "Oport. de extensão" |
-            tema == "Equipamentos suficientes") %>%
-    summarise(media_t = mean(media)) %>% 
-    ggplot(aes(x = media_t,
-               y = reorder(IES,media_t),
-               color = tema)) +
-    geom_point(alpha = .5) +
-    geom_point(data = respostas %>%
-                    na.omit(.) %>%
-                    group_by(IES) %>%
-                    filter(tema == "Ambiente p/ aulas práticas" |
-                            tema == "Atividades práticas suficientes" |
-                            tema == "Conteúdo útil p/ prática" |
-                            tema == "Oport. de extensão" |
-                            tema == "Equipamentos suficientes") %>% 
-                    summarise(media_t = mean(media)), 
-                               color = "gray22")+
-    labs(x = "Media", y = "IES")
-ggplotly(t)
-
-    
-```
-
-Vamos observar para um perfil mais cientifico, também
-
-```{r}
-# Perfil científico
-c= respostas %>%
-    na.omit(.) %>%
-    group_by(IES,
-             tema) %>%
-    filter(tema == "Comunicação oral e escrita" |
-            tema == "Iniciação científica" |
-            tema == "Monitores" |
-            tema == "Reflexão e argumentação" |
-            tema == "Pensamento crítico") %>%
-    summarise(media_c = mean(media)) %>% 
-    ggplot(aes(x = media_c,
-               y = reorder(IES,media_c),
-               color = tema)) +
-    geom_point(alpha = .5) +
-    geom_point(data = respostas %>%
-                    na.omit(.) %>%
-                    group_by(IES) %>%
-                    filter(tema == "Comunicação oral e escrita" |
-                            tema == "Iniciação científica" |
-                            tema == "Monitores" |
-                            tema == "Reflexão e argumentação" |
-                            tema == "Pensamento crítico") %>% 
-                    summarise(media_c = mean(media)), 
-                               color = "black")+
-    labs(x = "Media", y = "IES")
-ggplotly(c)
-
-```
-
-Agora, podemos comparar se uma IES possui um perfil mais cientifico ou técnico
+#Agora, comparamos se uma IES possui um perfil mais cientifico ou técnico
 
 ```{r}
 # Comparação dos perfis
@@ -163,7 +96,85 @@ p = perfis %>%
 ggplotly(p)
 ```
 
-Para a seguinte visualização, vamos perceber quais as notas de cada estado para as categorias do Enade. Para isso, calculamos a mediana de cada categoria com base no estado.
+Observa-se que a IES com perfil mais científico é a UECE e a FEI, o mais técnico. Já a FMU possui o perfil mais equilibrado dentre todas. Entretanto, vale ressaltar que esta comparação não avalia a qualidade dos perfis para cada IES. Para isto, devemos considerar o desempenho das médias dos temas que compõem cada perfil.
+
+
+#Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medias de cada IES para tais temas.
+
+```{r width = 100}
+# Perfil técnico
+t = respostas %>%
+    na.omit(.) %>%
+    group_by(IES,
+             tema) %>%
+    filter(tema == "Ambiente p/ aulas práticas" |
+            tema == "Atividades práticas suficientes" |
+            tema == "Conteúdo útil p/ prática" |
+            tema == "Oport. de extensão" |
+            tema == "Equipamentos suficientes") %>%
+    summarise(media_t = mean(media)) %>% 
+    ggplot(aes(x = media_t,
+               y = reorder(IES,media_t),
+               color = tema)) +
+    geom_point(alpha = .5) +
+    geom_point(data = respostas %>%
+                    na.omit(.) %>%
+                    group_by(IES) %>%
+                    filter(tema == "Ambiente p/ aulas práticas" |
+                            tema == "Atividades práticas suficientes" |
+                            tema == "Conteúdo útil p/ prática" |
+                            tema == "Oport. de extensão" |
+                            tema == "Equipamentos suficientes") %>% 
+                    summarise(media_t = mean(media)), 
+                               color = "gray22")+
+    labs(x = "Media",
+         y = "IES",
+         title = "Médias por temas técnicos")
+ggplotly(t)
+
+    
+```
+UNESC, FMU, UFAM e PUC-Minas são as IES que apresentam melhores resultados para os temas de perfil técnico, com médias a partir de 5 na avaliação dos estudantes. A Faculdade Pitágoras é a segunda pior para o perfil científico, destacando-se com a pior média de oportunidade de extensão.
+
+
+#Vamos observar para um perfil mais cientifico também
+
+```{r}
+# Perfil científico
+c= respostas %>%
+    na.omit(.) %>%
+    group_by(IES,
+             tema) %>%
+    filter(tema == "Comunicação oral e escrita" |
+            tema == "Iniciação científica" |
+            tema == "Monitores" |
+            tema == "Reflexão e argumentação" |
+            tema == "Pensamento crítico") %>%
+    summarise(media_c = mean(media)) %>% 
+    ggplot(aes(x = media_c,
+               y = reorder(IES,media_c),
+               color = tema)) +
+    geom_point(alpha = .5) +
+    geom_point(data = respostas %>%
+                    na.omit(.) %>%
+                    group_by(IES) %>%
+                    filter(tema == "Comunicação oral e escrita" |
+                            tema == "Iniciação científica" |
+                            tema == "Monitores" |
+                            tema == "Reflexão e argumentação" |
+                            tema == "Pensamento crítico") %>% 
+                    summarise(media_c = mean(media)), 
+                               color = "black")+
+    labs(x = "Media",
+         y = "IES",
+         title = "Médias por temas científicos")
+ggplotly(c)
+
+```
+UNESC, FMU e PUC-Minas também se destacam como as IES que apresentam melhores resultados para os temas de perfil científico, com médias acima de 5 na avaliação dos estudantes. FACAPE destaca-se com a pior média no quesito monitores e a Faculdade Pitágoras de São Luiz é a pior também no perfil científico, destacando-se com a menor média de iniciação científica.
+
+
+#Para a seguinte visualização, vamos perceber quais as notas de cada estado para as categorias do Enade. Para isso, calculamos a mediana de cada categoria com base no estado.
 
 ```{r}
 alem_tecnico = respostas %>%
