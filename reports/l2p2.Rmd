@@ -1,5 +1,5 @@
 ---
-title: "Um Dashboard"
+title: "L2P2"
 author: "Elton Dantas e Rebeca Beltrão"
 runtime: shiny
 output: 
@@ -46,9 +46,10 @@ dados %>%
 
 ```
 
+
 Agora, escolhemos algumas catacteristicas que constituem um perfil mais tecnico para as universidades e vamos observar as medianas de cada IES para tais temas.
 
-```{r width = 100}
+```{r fig.width=8, fig.height=8}
 # Perfil técnico
 t = respostas %>%
     na.omit(.) %>%
@@ -82,7 +83,7 @@ ggplotly(t)
 
 Vamos observar para um perfil mais cientifico, também
 
-```{r}
+```{r fig.width=8, fig.height=8}
 # Perfil científico
 c= respostas %>%
     na.omit(.) %>%
@@ -220,7 +221,7 @@ mediana_por_Uf = mediana_geral_uf %>%
 ```
 
 
-```{r width = 10, height = 5000}
+```{r width = 8, height = 3000}
 selectInput("UF",
             "UF",
             choices = c("AM", "BA", "CE","DF","GO","MA", "MG","PB","PE", "PI", "PR","RJ", "RS", "SC", "SP"))
