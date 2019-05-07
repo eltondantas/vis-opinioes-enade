@@ -176,92 +176,92 @@ ggplotly(c)
     UNESC, FMU e PUC-Minas também se destacam como as IES que apresentam melhores resultados para os temas de perfil científico, com médias acima de 5 na avaliação dos estudantes. FACAPE destaca-se com a pior média no quesito monitores e a Faculdade Pitágoras de São Luiz é a pior também no perfil científico, destacando-se com a menor média de iniciação científica.
 
 
-#Para a seguinte visualização, vamos perceber quais as notas de cada estado para as categorias do Enade. Para isso, calculamos a mediana de cada categoria com base no estado.
+<!-- #Para a seguinte visualização, vamos perceber quais as notas de cada estado para as categorias do Enade. Para isso, calculamos a mediana de cada categoria com base no estado. -->
 
-```{r}
-alem_tecnico = respostas %>%
-    filter(categoria == "Aprendizagem além do técnico") %>%
-    group_by(UF) %>% 
-    summarise(mediana_aprendizagem = median(media)) 
+<!-- ```{r} -->
+<!-- alem_tecnico = respostas %>% -->
+<!--     filter(categoria == "Aprendizagem além do técnico") %>% -->
+<!--     group_by(UF) %>%  -->
+<!--     summarise(mediana_aprendizagem = median(media))  -->
 
-cursos_geral = respostas %>%
-    filter(categoria == "Curso em geral") %>%
-    group_by(UF) %>% 
-    summarise(mediana_curso = median(media)) 
+<!-- cursos_geral = respostas %>% -->
+<!--     filter(categoria == "Curso em geral") %>% -->
+<!--     group_by(UF) %>%  -->
+<!--     summarise(mediana_curso = median(media))  -->
 
-ensino_apoio_aval = respostas %>%
-    filter(categoria == "Ensino, apoio e avaliacão") %>%
-    group_by(UF) %>%
-    summarise(mediana_eaa = median(media)) 
+<!-- ensino_apoio_aval = respostas %>% -->
+<!--     filter(categoria == "Ensino, apoio e avaliacão") %>% -->
+<!--     group_by(UF) %>% -->
+<!--     summarise(mediana_eaa = median(media))  -->
 
-infraestrutura = respostas %>%
-    filter(categoria == "Infraestrutura") %>%
-    group_by(UF) %>% 
-    summarise(mediana_infraestrutura = median(media)) 
+<!-- infraestrutura = respostas %>% -->
+<!--     filter(categoria == "Infraestrutura") %>% -->
+<!--     group_by(UF) %>%  -->
+<!--     summarise(mediana_infraestrutura = median(media))  -->
 
-outros = respostas %>%
-    filter(categoria == "Outros") %>%
-    group_by(NOME_CURSO) %>% 
-    summarise(mediana_outros = median(media)) 
-
-
-```
-
-Calculando as medianas para cada estado
-
-```{r}
-mediana_geral_uf = respostas %>%
-    group_by(UF) %>% summarise(mediana_geral=median(media))
-
-UF <- c("AM", "BA", "CE", "DF", "GO", "MA", "MG","PB", "PE", "PI", "PR", "RJ", "RS","SC","SP")
-
-mediana_geral_uf$UF = UF
-mediana_geral_uf$mediana_ALDT = alem_tecnico$mediana_aprendizagem
-mediana_geral_uf$mediana_CEG = cursos_geral$mediana_curso
-mediana_geral_uf$mediana_EAA = ensino_apoio_aval$mediana_eaa
-mediana_geral_uf$mediana_INFRA = infraestrutura$mediana_infraestrutura
-
-mediana_geral_uf <- mediana_geral_uf[order(mediana_geral_uf$mediana_geral),]
-
-mediana_por_Uf = mediana_geral_uf %>%
-                 group_by(UF) %>%
-                 summarise(mediana_ALDT=median(mediana_ALDT),
-                           mediana_CEG=median(mediana_CEG),
-                           mediana_EAA=median(mediana_EAA),
-                           mediana_INFRA=median(mediana_INFRA))
-
-```
+<!-- outros = respostas %>% -->
+<!--     filter(categoria == "Outros") %>% -->
+<!--     group_by(NOME_CURSO) %>%  -->
+<!--     summarise(mediana_outros = median(media))  -->
 
 
-```{r width = 8, height = 3000}
-selectInput("UF",
-            "UF",
-            choices = c("AM", "BA", "CE","DF","GO","MA", "MG","PB","PE", "PI", "PR","RJ", "RS", "SC", "SP"))
+<!-- ``` -->
 
-renderPlot({
-    regiao_plot = mediana_por_Uf %>% filter(UF == input$UF)
-    dat <-  data.frame(
-        medianas_UF <- c(regiao_plot$mediana_ALDT, 
-                         regiao_plot$mediana_CEG,
-                         regiao_plot$mediana_EAA,
-                         regiao_plot$mediana_INFRA),
-        categorias <- c("Aprendizado Além do Tecnico",
-                        "Curso em Geral", 
-                        "Ensino Apoio Avaliação",
-                        "Infraestrutura"))
+<!-- Calculando as medianas para cada estado -->
 
-    ggplot(data= dat, 
-           aes(x = categorias,
-               y = medianas_UF, color=categorias)) +
-       geom_point( size=4) +
-       theme_light() +
-       theme(
-        panel.grid.major.x = element_blank(),
-        panel.border = element_blank(),
-        axis.ticks.x = element_blank())+
-        labs(x = "Categorias",
-             y = "Medianas por UF")
-})
-```
+<!-- ```{r} -->
+<!-- mediana_geral_uf = respostas %>% -->
+<!--     group_by(UF) %>% summarise(mediana_geral=median(media)) -->
 
-    Calculamos a mediana de cada categoria com base em um estado, e podemos observar que os valores para cada categoria são bastante divergentes, com notas muito altas em algumas e muito baixas em outras, como é o caso do estado de SP e do PR por exemplo. Isso demonstra que os estados não investem uniformemente nas IES e que mesmo que seja uma boa instituição, as medias não são altas para todos os quesitos.
+<!-- UF <- c("AM", "BA", "CE", "DF", "GO", "MA", "MG","PB", "PE", "PI", "PR", "RJ", "RS","SC","SP") -->
+
+<!-- mediana_geral_uf$UF = UF -->
+<!-- mediana_geral_uf$mediana_ALDT = alem_tecnico$mediana_aprendizagem -->
+<!-- mediana_geral_uf$mediana_CEG = cursos_geral$mediana_curso -->
+<!-- mediana_geral_uf$mediana_EAA = ensino_apoio_aval$mediana_eaa -->
+<!-- mediana_geral_uf$mediana_INFRA = infraestrutura$mediana_infraestrutura -->
+
+<!-- mediana_geral_uf <- mediana_geral_uf[order(mediana_geral_uf$mediana_geral),] -->
+
+<!-- mediana_por_Uf = mediana_geral_uf %>% -->
+<!--                  group_by(UF) %>% -->
+<!--                  summarise(mediana_ALDT=median(mediana_ALDT), -->
+<!--                            mediana_CEG=median(mediana_CEG), -->
+<!--                            mediana_EAA=median(mediana_EAA), -->
+<!--                            mediana_INFRA=median(mediana_INFRA)) -->
+
+<!-- ``` -->
+
+
+<!-- ```{r width = 8, height = 3000} -->
+<!-- selectInput("UF", -->
+<!--             "UF", -->
+<!--             choices = c("AM", "BA", "CE","DF","GO","MA", "MG","PB","PE", "PI", "PR","RJ", "RS", "SC", "SP")) -->
+
+<!-- renderPlot({ -->
+<!--     regiao_plot = mediana_por_Uf %>% filter(UF == input$UF) -->
+<!--     dat <-  data.frame( -->
+<!--         medianas_UF <- c(regiao_plot$mediana_ALDT,  -->
+<!--                          regiao_plot$mediana_CEG, -->
+<!--                          regiao_plot$mediana_EAA, -->
+<!--                          regiao_plot$mediana_INFRA), -->
+<!--         categorias <- c("Aprendizado Além do Tecnico", -->
+<!--                         "Curso em Geral",  -->
+<!--                         "Ensino Apoio Avaliação", -->
+<!--                         "Infraestrutura")) -->
+
+<!--     ggplot(data= dat,  -->
+<!--            aes(x = categorias, -->
+<!--                y = medianas_UF, color=categorias)) + -->
+<!--        geom_point( size=4) + -->
+<!--        theme_light() + -->
+<!--        theme( -->
+<!--         panel.grid.major.x = element_blank(), -->
+<!--         panel.border = element_blank(), -->
+<!--         axis.ticks.x = element_blank())+ -->
+<!--         labs(x = "Categorias", -->
+<!--              y = "Medianas por UF") -->
+<!-- }) -->
+<!-- ``` -->
+
+<!--     Calculamos a mediana de cada categoria com base em um estado, e podemos observar que os valores para cada categoria são bastante divergentes, com notas muito altas em algumas e muito baixas em outras, como é o caso do estado de SP e do PR por exemplo. Isso demonstra que os estados não investem uniformemente nas IES e que mesmo que seja uma boa instituição, as medias não são altas para todos os quesitos. -->
